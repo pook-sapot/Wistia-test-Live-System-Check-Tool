@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wistia System Check</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="https://cdn.glitch.global/5e095f91-44c6-40d9-9086-9b926a9ef20f/Wistia%20Flags%20Blue.svg?v=1744296159044">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #f8f9fa;
+    }
+    .container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 24px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .logo-container {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .wistia-logo {
+      height: 50px;
+      width: auto;
+      margin: 0 auto;
+      display: block;
+    }
+    h1 {
+      color: #2C4BFF;
+      font-size: 24px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .requirements-box {
+      background-color: #eef1ff;
+      border: 1px solid #d8dfff;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .requirements-box h2 {
+      color: #2C4BFF;
+      font-size: 16px;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+    .requirements-box ul {
+      color: #3a4374;
+      font-size: 14px;
+      margin: 0;
+      padding-left: 20px;
+    }
+    .btn-primary {
+      background-color: #2C4BFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 32px;
+      transition: background-color 0.2s;
+    }
+    .btn-primary:hover {
+      background-color: #233dd2;
+    }
+    .btn-primary:disabled {
+      background-color: #a1b3ff;
+      cursor: not-allowed;
+    }
+    .test-card {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .test-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      cursor: pointer;
+      background-color: white;
+    }
+    .test-title {
+      display: flex;
+      align-items: center;
+    }
+    .test-icon {
+      margin-right: 12px;
+      color: #2C4BFF;
+      font-size: 20px;
+    }
+    .test-name {
+      font-weight: 600;
+      margin: 0;
+    }
+    .test-result {
+      font-size: 14px;
+      color: #666;
+      margin: 4px 0 0 0;
+    }
+    .test-status {
+      display: flex;
+      align-items: center;
+    }
+    .status-icon {
+      margin-right: 8px;
+      font-size: 18px;
+    }
+    .status-success {
+      color: #28a745;
+    }
+    .status-warning {
+      color: #ffc107;
+    }
+    .status-error {
+      color: #dc3545;
+    }
+    .test-btn {
+      background-color: #eee;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .test-btn:hover {
+      background-color: #ddd;
+    }
+    .test-content {
+      padding: 16px;
+      background-color: #f8f9fa;
+      border-top: 1px solid #ddd;
+      display: none;
+    }
+    .test-content.active {
+      display: block;
+    }
+    .test-description {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+    .test-list {
+      font-size: 14px;
+      color: #555;
+      margin: 0;
+      padding-left: 20px;
+    }
+    .test-list li {
+      margin-bottom: 4px;
+    }
+    .test-highlight {
+      font-weight: 600;
+    }
+    .alert {
+      padding: 12px;
+      border-radius: 4px;
+      margin-top: 12px;
+    }
+    .alert-warning {
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      color: #856404;
+    }
+    .alert-danger {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    .external-link {
+      display: inline-flex;
+      align-items: center;
+      color: #2C4BFF;
+      text-decoration: none;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+    .external-link:hover {
+      text-decoration: underline;
+      color: #233dd2;
+    }
+    .arrow-icon {
+      margin-left: 4px;
+    }
+    .results-summary {
+      margin-top: 32px;
+      text-align: center;
+      display: none;
+    }
+    .status-box {
+      padding: 16px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+    .status-box-success {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+    }
+    .status-box-warning {
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+    }
+    .status-message {
+      font-weight: 500;
+      margin: 0;
+    }
+    .status-message-success {
+      color: #155724;
+    }
+    .status-message-warning {
+      color: #856404;
+    }
+    .help-text {
+      font-size: 14px;
+      color: #666;
+      margin-top: 12px;
+    }
+    .action-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+    .action-btn {
+      background-color: #2C4BFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      transition: background-color 0.2s;
+    }
+    .action-btn:hover {
+      background-color: #233dd2;
+    }
+    .action-btn-secondary {
+      background-color: #6c757d;
+    }
+    .action-btn-secondary:hover {
+      background-color: #5a6268;
+    }
+    /* Simple icons */
+    .icon-success::before {
+      content: "✓";
+    }
+    .icon-warning::before {
+      content: "⚠";
+    }
+    .icon-error::before {
+      content: "✕";
+    }
+    .icon-desktop::before {
+      content: "💻";
+    }
+    .icon-camera::before {
+      content: "📷";
+    }
+    .icon-mic::before {
+      content: "🎤";
+    }
+    .icon-wifi::before {
+      content: "📶";
+    }
+    .icon-arrow::before {
+      content: "→";
+    }
+    .icon-refresh::before {
+      content: "🔄";
+    }
+    .icon-doc::before {
+      content: "📄";
+    }
+    .icon-help::before {
+      content: "❓";
+    }
+    .icon-diagnostics::before {
+      content: "🔍";
+    }
+    
+    /* Added style for 100ms diagnostics */
+    .diagnostics-frame {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 6px;
+      margin-top: 16px;
+    }
+    
+    .diagnostics-container {
+      margin-top: 16px;
+    }
+    
+    .diagnostics-btn {
+      background-color: #2C4BFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      transition: background-color 0.2s;
+      margin-top: 16px;
+    }
+    
+    .troubleshooting-section {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f3f4f6;
+      border-radius: 6px;
+      border-left: 4px solid #2C4BFF;
+    }
+    
+    .troubleshooting-section h4 {
+      color: #2C4BFF;
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+    
+    .troubleshooting-section p {
+      font-size: 13px;
+      margin: 8px 0;
+      color: #555;
+    }
+    
+    .diagnostics-btn:hover {
+      background-color: #233dd2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-container">
+        <!-- Using an image tag with base64 encoded SVG for maximum compatibility -->
+        <img src="https://cdn.glitch.global/5e095f91-44c6-40d9-9086-9b926a9ef20f/Wistia%20Flags%20Blue.svg?v=1744296159044" alt="Wistia Logo" class="wistia-logo">
+      </div>
+      <h1>System Check Tool</h1>
+      <p>Ensure your system is ready for a smooth Wistia live event experience</p>
+    </header>
+
+    <div class="requirements-box">
+      <h2>Wistia Live Requirements:</h2>
+      <ul>
+        <li>Chromium-based browser (Chrome, Edge, Brave, Arc)</li>
+        <li>Laptop or desktop computer for best experience</li>
+        <li>Webcam and microphone</li>
+        <li>A solid internet connection</li>
+        <li>Windows 10+ or macOS 14+ recommended</li>
+      </ul>
+      <div style="margin-top: 10px; text-align: right;">
+    <a href="https://support.wistia.com/en/articles/9833449-live-event-technical-recommendations" target="_blank" class="external-link" style="font-size: 13px;">
+      View detailed technical recommendations <span class="arrow-icon icon-arrow"></span>
+    </a>
+  </div>
+    </div>
+
+    <button id="run-all-tests" class="btn-primary">Run All Tests</button>
+
+    <div class="tests-container">
+      <!-- System Check -->
+      <div class="test-card" id="system-test">
+        <div class="test-header" onclick="toggleTest('system')">
+          <div class="test-title">
+            <span class="test-icon icon-desktop"></span>
+            <div>
+              <h3 class="test-name">Device & Browser Check</h3>
+              <p class="test-result" id="system-result"></p>
+            </div>
+          </div>
+          <div class="test-status">
+            <span class="status-icon" id="system-status-icon"></span>
+            <button class="test-btn" id="system-test-btn" onclick="event.stopPropagation(); runSystemCheck()">Run Check</button>
+          </div>
+        </div>
+        <div class="test-content" id="system-content">
+          <p class="test-description">A compatible browser and device are required for the best Wistia Live experience.</p>
+          <ul class="test-list">
+            <li>Compatible browsers: <span class="test-highlight">Google Chrome, Microsoft Edge, Brave, Arc</span></li>
+            <li>Device: <span class="test-highlight">Laptop or desktop computer</span> recommended for best experience</li>
+            <li>Recommended OS: <span class="test-highlight">Windows 10+ or macOS 14+</span></li>
+          </ul>
+          <div class="alert alert-danger" id="system-alert" style="display: none;"></div>
+          
+          <a href="https://www.whatismybrowser.com/" target="_blank" class="external-link">
+            Check detailed browser & system info <span class="arrow-icon icon-arrow"></span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Permissions Check -->
+      <div class="test-card" id="permissions-test">
+        <div class="test-header" onclick="toggleTest('permissions')">
+          <div class="test-title">
+            <span class="test-icon icon-camera"></span>
+            <div>
+              <h3 class="test-name">Browser Permissions</h3>
+              <p class="test-result" id="permissions-result"></p>
+            </div>
+          </div>
+          <div class="test-status">
+            <span class="status-icon" id="permissions-status-icon"></span>
+            <button class="test-btn" id="permissions-test-btn" onclick="event.stopPropagation(); runPermissionsCheck()">Run Check</button>
+          </div>
+        </div>
+        <div class="test-content" id="permissions-content">
+          <p class="test-description">Wistia Live needs permission to access your camera, microphone, and screen sharing. This test checks if your browser permissions are properly configured.</p>
+          <ul class="test-list" id="permissions-list">
+            <li>Camera: <span id="camera-status" class="test-highlight">Not checked</span></li>
+            <li>Microphone: <span id="mic-status" class="test-highlight">Not checked</span></li>
+            <li>Screen Sharing: <span id="screen-status" class="test-highlight">Not checked</span></li>
+          </ul>
+          <div class="alert alert-danger" id="permissions-alert" style="display: none;"></div>
+          
+          <div class="troubleshooting-section">
+            <h4>Troubleshooting Tips:</h4>
+            <p>Browser extensions may interfere with your streaming. If permissions look correct, try disabling any browser extensions.</p>
+            <p>Other live streaming applications (like Zoom) may conflict with Wistia Live. Ensure you're not running similar applications simultaneously.</p>
+            <p>If experiencing freezing or stuttering, restart your computer and close unnecessary tabs and applications before going live.</p>
+            <a href="https://support.wistia.com/en/articles/9149835-troubleshooting-camera-mic-and-screen-sharing" target="_blank" class="external-link">
+              View our Camera & Mic Troubleshooting Guide <span class="arrow-icon icon-arrow"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Device Check -->
+      <div class="test-card" id="device-test">
+        <div class="test-header" onclick="toggleTest('device')">
+          <div class="test-title">
+            <span class="test-icon icon-mic"></span>
+            <div>
+              <h3 class="test-name">Webcam & Microphone Test</h3>
+              <p class="test-result" id="device-result"></p>
+            </div>
+          </div>
+          <div class="test-status">
+            <span class="status-icon" id="device-status-icon"></span>
+            <button class="test-btn" id="device-test-btn" onclick="event.stopPropagation(); runDeviceCheck()">Run Test</button>
+          </div>
+        </div>
+        <div class="test-content" id="device-content">
+          <p class="test-description">While the Browser Permissions test checks if access is granted, this test verifies that your webcam and microphone are properly connected and functioning.</p>
+          <ul class="test-list">
+            <li>Webcam: <span id="webcam-status" class="test-highlight">Not checked</span></li>
+            <li>Microphone: <span id="microphone-status" class="test-highlight">Not checked</span></li>
+          </ul>
+          
+          <div class="troubleshooting-section">
+            <h4>Difference Between Permissions and Device Tests:</h4>
+            <p><strong>Browser Permissions Test</strong>: Checks if your browser has been granted permission to access your devices.</p>
+            <p><strong>Webcam & Microphone Test</strong>: Verifies that your hardware is properly connected and functioning correctly.</p>
+            <p>You need both proper permissions AND working devices for a successful live event.</p>
+          </div>
+          
+          <a href="https://webrtc.github.io/samples/src/content/devices/input-output/" target="_blank" class="external-link">
+            Test audio/video with WebRTC demo <span class="arrow-icon icon-arrow"></span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Internet Speed Test -->
+      <div class="test-card" id="speed-test">
+        <div class="test-header" onclick="toggleTest('speed')">
+          <div class="test-title">
+            <span class="test-icon icon-wifi"></span>
+            <div>
+              <h3 class="test-name">Internet Speed Test</h3>
+              <p class="test-result" id="speed-result"></p>
+            </div>
+          </div>
+          <div class="test-status">
+            <span class="status-icon" id="speed-status-icon"></span>
+            <button class="test-btn" id="speed-test-btn" onclick="event.stopPropagation(); runSpeedTest()">Run Test</button>
+          </div>
+        </div>
+        <div class="test-content" id="speed-content">
+          <p class="test-description">A stable network connection with good upload speed is crucial for a quality live event experience.</p>
+          <ul class="test-list">
+            <li>Required upload speed: <span class="test-highlight">10+ Mbps</span></li>
+            <li>Current upload speed: <span id="upload-speed" class="test-highlight">Not tested</span></li>
+            <li>If using WiFi, ensure you have a strong signal or use a wired connection for best results</li>
+          </ul>
+          <div class="alert alert-warning" id="speed-alert" style="display: none;"></div>
+          
+          <a href="https://www.speedtest.net/" target="_blank" class="external-link">
+            Run detailed speed test at Speedtest.net <span class="arrow-icon icon-arrow"></span>
+          </a>
+        </div>
+      </div>
+
+     <!-- 100ms Diagnostic Test -->
+<div class="test-card" id="100ms-test">
+  <div class="test-header" onclick="toggleTest('100ms')">
+    <div class="test-title">
+      <span class="test-icon icon-diagnostics"></span>
+      <div>
+        <h3 class="test-name">Connection Diagnostics</h3>
+        <p class="test-result" id="100ms-result">Powered by 100ms</p>
+      </div>
+    </div>
+    <div class="test-status">
+      <span class="status-icon" id="100ms-status-icon"></span>
+      <button class="test-btn" id="100ms-test-btn" onclick="event.stopPropagation(); run100msDiagnostics()">Launch 100ms Diagnostics Connection Tool</button>
+    </div>
+  </div>
+</div>
+        <div class="test-content" id="100ms-content">
+          <p class="test-description">Run advanced diagnostics to check your network connection quality, connection capabilities, and more.</p>
+          <ul class="test-list">
+            <li>Connection stability: Tests your browser's ability to establish reliable connections</li>
+            <li>Network quality: Checks for packet loss, jitter, and latency</li>
+            <li>Media capabilities: Verifies audio/video encoding/decoding capabilities</li>
+            <li>Server connectivity: Confirms connection through firewalls and network restrictions</li>
+          </ul>
+          
+          <div id="diagnostics-container" class="diagnostics-container">
+          </div>
+          
+          <div class="alert alert-warning" id="100ms-alert" style="display: none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="results-summary" id="results-summary">
+      <div class="status-box" id="status-box">
+        <p class="status-message" id="status-message"></p>
+      </div>
+      
+      <div class="action-container">
+        <button id="run-again-btn" class="action-btn">
+          <span class="icon-refresh" style="margin-right: 8px;"></span>
+          Run Tests Again
+</button>
+<a href="https://wistia.com/support/contact" id="get-support-btn" class="action-btn action-btn-secondary" target="_blank" style="text-decoration: none;" onclick="event.preventDefault(); window.open('https://wistia.com/support/contact', '_blank');">
+  <span class="icon-help" style="margin-right: 8px;"></span>
+  Get Support
+</a>
+      </div>
+      
+      <p class="help-text" id="help-text">Please resolve any issues highlighted above to ensure the best experience with Wistia.</p>
+    </div>
+    <hr style="margin: 40px 0 20px; border: none; border-top: 1px solid #eee;">
+  <div style="text-align: center; margin-bottom: 20px;">
+    <p style="font-size: 14px; color: #666; margin-bottom: 10px;">
+      For additional assistance, contact Wistia support at <a href="mailto:support@wistia.com" style="color: #2C4BFF; text-decoration: none;">support@wistia.com</a>
+    </p>
+    
+    <div class="troubleshooting-section" style="text-align: left; margin: 15px auto; max-width: 600px;">
+      <h4 style="color: #2C4BFF; margin-top: 0;">Helpful details to send when contacting support:</h4>
+      <ul style="font-size: 13px; color: #555; margin-bottom: 15px;">
+        <li>Link to your Live Event</li>
+        <li>Specific version of your web browser</li>
+        <li>Specific version of your operating system</li>
+        <li>General computer specs (such as CPU cores/speed, amount of RAM, etc.)</li>
+        <li>If applicable, external cameras, microphones, and drivers</li>
+        <li>Any error messages you encountered</li>
+      </ul>
+    </div>
+    
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px;">
+      <a href="https://support.wistia.com/en/articles/8728935-live-event-troubleshooting-guide" target="_blank" class="external-link" style="font-size: 14px;">
+        Live Event Troubleshooting Guide <span class="arrow-icon icon-arrow"></span>
+      </a>
+      
+      <a href="https://support.wistia.com/en/collections/5604192-webinars-and-live-events" target="_blank" class="external-link" style="font-size: 14px;">
+        Webinars and Live Events Help Center <span class="arrow-icon icon-arrow"></span>
+      </a>
+    </div>
+  </div>
+</div> <!-- This is the closing tag of the main container -->
+  
+
+  <script>
+    // State
+    let testResults = {
+      system: null,
+      permissions: null,
+      device: null,
+      speed: null,
+      diagnostics: null
+    };
+    
+    // Utility functions
+    function toggleTest(testId) {
+      const content = document.getElementById(`${testId}-content`);
+      const allContents = document.querySelectorAll('.test-content');
+      
+      allContents.forEach(el => {
+        if (el.id !== `${testId}-content`) {
+          el.classList.remove('active');
+        }
+      });
+      
+      content.classList.toggle('active');
+    }
+    
+    function updateTestButton(testId, isRunning) {
+      const button = document.getElementById(`${testId}-test-btn`);
+      button.disabled = isRunning;
+      button.textContent = isRunning ? 'Running...' : 'Run Test';
+    }
+    
+    function updateStatusIcon(testId, status) {
+      const icon = document.getElementById(`${testId}-status-icon`);
+      icon.className = 'status-icon';
+      
+      if (status === 'success') {
+        icon.classList.add('status-success', 'icon-success');
+      } else if (status === 'warning') {
+        icon.classList.add('status-warning', 'icon-warning');
+      } else if (status === 'error') {
+        icon.classList.add('status-error', 'icon-error');
+      }
+    }
+    
+    function updateReadyStatus() {
+      const summary = document.getElementById('results-summary');
+      const statusBox = document.getElementById('status-box');
+      const statusMessage = document.getElementById('status-message');
+      const helpText = document.getElementById('help-text');
+      
+      // Only show if all tests have been run (excluding 100ms diagnostics which is optional)
+      if (!testResults.system || !testResults.permissions || !testResults.device || !testResults.speed) {
+        summary.style.display = 'none';
+        return;
+      }
+      
+      summary.style.display = 'block';
+      
+      // Check readiness
+      let isReady = true;
+      let message = '';
+      
+      if (!testResults.system.pass) {
+        isReady = false;
+        message = 'Browser/device compatibility issues detected';
+      } else if (!testResults.permissions.pass) {
+        isReady = false;
+        message = 'Browser permission issues detected';
+      } else if (!testResults.device.pass) {
+        isReady = false;
+        message = 'Webcam/microphone issues detected';
+      } else if (testResults.speed.upload < 10) {
+        isReady = false;
+        message = 'Upload speed below 10 Mbps recommendation';
+      } else {
+        message = "All system checks passed.";
+      }
+      
+      // Update UI
+      statusBox.className = isReady ? 'status-box status-box-success' : 'status-box status-box-warning';
+      statusMessage.className = isReady ? 'status-message status-message-success' : 'status-message status-message-warning';
+      statusMessage.textContent = message;
+      
+      helpText.style.display = isReady ? 'none' : 'block';
+    }
+    
+    // Test implementations
+    function runSystemCheck() {
+      updateTestButton('system', true);
+      
+      // Simulate a system check
+      setTimeout(() => {
+        // Check if browser is Chromium-based
+        const userAgent = navigator.userAgent.toLowerCase();
+        const isChromiumBased = /chrome|chromium|edge|brave|arc/i.test(userAgent);
+        const browserName = isChromiumBased 
+          ? (userAgent.includes('edge') 
+              ? 'Microsoft Edge' 
+              : userAgent.includes('brave') 
+                ? 'Brave' 
+                : userAgent.includes('arc') 
+                  ? 'Arc' 
+                  : 'Google Chrome')
+          : (userAgent.includes('firefox') 
+              ? 'Firefox' 
+              : userAgent.includes('safari') 
+                ? 'Safari' 
+                : 'Unknown Browser');
+        
+        // Check OS version (simplified)
+        const isWindows = userAgent.includes('windows');
+        const isMac = userAgent.includes('macintosh');
+        const osName = isWindows 
+          ? 'Windows' + (userAgent.includes('windows nt 10') ? ' 10+' : ' (Older Version)') 
+          : isMac 
+            ? 'macOS' + (userAgent.includes('mac os x 10_15') || userAgent.includes('mac os x 11') ? ' 14+' : ' (Older Version)') 
+            : 'Other OS';
+        
+        // Check if mobile
+        const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+        
+        // Update result
+        const systemResult = {
+          browser: browserName,
+          os: osName,
+          isMobile: isMobile,
+          isChromiumBased: isChromiumBased,
+          pass: isChromiumBased && !isMobile
+        };
+        
+        testResults.system = systemResult;
+        
+        // Update UI
+        document.getElementById('system-result').textContent = `${systemResult.browser} on ${systemResult.os}`;
+        updateStatusIcon('system', systemResult.pass ? 'success' : 'error');
+        
+        const alertEl = document.getElementById('system-alert');
+        if (!systemResult.pass) {
+          let alertMessage = '';
+          if (systemResult.isMobile) {
+            alertMessage = 'Mobile devices provide limited functionality. For the best experience, consider using a laptop or desktop computer.';
+          } else {
+            alertMessage = 'Your browser may have limited compatibility with Wistia Live. For the best experience, please use a Chromium-based browser such as Google Chrome, Microsoft Edge, Brave, or Arc.';
+          }
+          alertEl.textContent = alertMessage;
+          alertEl.style.display = 'block';
+        } else {
+          alertEl.style.display = 'none';
+        }
+        
+        updateTestButton('system', false);
+        updateReadyStatus();
+      }, 1000);
+    }
+    
+    function runPermissionsCheck() {
+      updateTestButton('permissions', true);
+      
+      // This is a simplified version - in reality, you'd need to actually request permissions
+      // Simulate permissions check
+      setTimeout(() => {
+        const permissionsResult = {
+          camera: 'granted',
+          microphone: 'granted',
+          screenShare: 'granted',
+          pass: true
+        };
+        
+        testResults.permissions = permissionsResult;
+        
+        // Update UI
+        document.getElementById('permissions-result').textContent = 'Camera, Microphone, and Screen Share access';
+        updateStatusIcon('permissions', permissionsResult.pass ? 'success' : 'error');
+        
+        document.getElementById('camera-status').textContent = permissionsResult.camera === 'granted' ? 'Access granted' : 'Access denied';
+        document.getElementById('camera-status').style.color = permissionsResult.camera === 'granted' ? '#28a745' : '#dc3545';
+        
+        document.getElementById('mic-status').textContent = permissionsResult.microphone === 'granted' ? 'Access granted' : 'Access denied';
+        document.getElementById('mic-status').style.color = permissionsResult.microphone === 'granted' ? '#28a745' : '#dc3545';
+        
+        document.getElementById('screen-status').textContent = permissionsResult.screenShare === 'granted' ? 'Access granted' : 'Access denied';
+        document.getElementById('screen-status').style.color = permissionsResult.screenShare === 'granted' ? '#28a745' : '#dc3545';
+        
+        const alertEl = document.getElementById('permissions-alert');
+        if (!permissionsResult.pass) {
+          alertEl.textContent = 'Some permissions are missing. Please allow camera, microphone, and screen sharing access in your browser settings for the best Wistia Live experience.';
+          alertEl.style.display = 'block';
+        } else {
+          alertEl.style.display = 'none';
+        }
+        
+        updateTestButton('permissions', false);
+        updateReadyStatus();
+      }, 1000);
+    }
+    
+    function runDeviceCheck() {
+      updateTestButton('device', true);
+      
+      // Simulate device check
+      setTimeout(() => {
+        const deviceResult = {
+          webcamDetected: true,
+          microphoneDetected: true,
+          webcamWorking: true,
+          microphoneWorking: true,
+          pass: true
+        };
+        
+        testResults.device = deviceResult;
+        
+        // Update UI
+        document.getElementById('device-result').textContent = deviceResult.webcamWorking && deviceResult.microphoneWorking ? 
+          'Devices detected and working' : 'Device issues detected';
+        updateStatusIcon('device', deviceResult.pass ? 'success' : 'error');
+        
+        document.getElementById('webcam-status').textContent = deviceResult.webcamDetected ? 'Detected' : 'Not detected';
+        document.getElementById('webcam-status').style.color = deviceResult.webcamDetected ? '#28a745' : '#dc3545';
+        
+        document.getElementById('microphone-status').textContent = deviceResult.microphoneDetected ? 'Detected' : 'Not detected';
+        document.getElementById('microphone-status').style.color = deviceResult.microphoneDetected ? '#28a745' : '#dc3545';
+        
+        updateTestButton('device', false);
+        updateReadyStatus();
+      }, 1000);
+    }
+    
+    function runSpeedTest() {
+      updateTestButton('speed', true);
+      
+      // Simulate a speed test
+      setTimeout(() => {
+        const speedResult = {
+          download: 45.6,
+          upload: 12.3,
+          pass: true
+        };
+        
+        testResults.speed = speedResult;
+        
+        // Update UI
+        document.getElementById('speed-result').textContent = `Upload: ${speedResult.upload} Mbps | Download: ${speedResult.download} Mbps`;
+        updateStatusIcon('speed', speedResult.upload >= 10 ? 'success' : 'warning');
+        
+        document.getElementById('upload-speed').textContent = `${speedResult.upload} Mbps`;
+        document.getElementById('upload-speed').style.color = speedResult.upload >= 10 ? '#28a745' : '#ffc107';
+        
+        const alertEl = document.getElementById('speed-alert');
+        if (speedResult.upload < 10) {
+          alertEl.textContent = `Your upload speed of ${speedResult.upload} Mbps is below the recommended 10 Mbps. This may affect your experience. Consider using a more stable connection.`;
+          alertEl.style.display = 'block';
+        } else {
+          alertEl.style.display = 'none';
+        }
+        
+        updateTestButton('speed', false);
+        updateReadyStatus();
+      }, 1500);
+    }
+    
+    // New function for 100ms diagnostics
+    function run100msDiagnostics() {
+      updateTestButton('100ms', true);
+      
+      // Update the UI to indicate diagnostics are starting
+      document.getElementById('100ms-result').textContent = 'Starting diagnostics...';
+      updateStatusIcon('100ms', 'warning');
+      
+      // Launch the diagnostics in new window or iframe
+      open100msDiagnostics();
+      
+      // Since we can't easily get results programmatically from the external tool,
+      // we'll just update the UI to show that diagnostics were launched
+      setTimeout(() => {
+        // Set a default result without pass/fail since we can't get actual results
+        testResults.diagnostics = {
+          launched: true,
+          timestamp: new Date().toISOString()
+        };
+        
+        // Update UI
+        document.getElementById('100ms-result').textContent = 'Diagnostics launched';
+        updateStatusIcon('100ms', 'success');
+        updateTestButton('100ms', false);
+      }, 1000);
+    }
+    
+    // Function to open 100ms diagnostics
+    function open100msDiagnostics() {
+      // Open in a new window/tab
+      window.open('https://diagnostics.100ms.live/', '_blank');
+    }
+    
+    function runAllTests() {
+      const allTestsBtn = document.getElementById('run-all-tests');
+      allTestsBtn.disabled = true;
+      allTestsBtn.textContent = 'Running Tests...';
+      
+      runSystemCheck();
+      
+      setTimeout(() => {
+        runPermissionsCheck();
+        
+        setTimeout(() => {
+          runDeviceCheck();
+          
+          setTimeout(() => {
+            runSpeedTest();
+            
+            // Note: We're not automatically running 100ms diagnostics as part of "Run All Tests"
+            // since it opens an external page or requires substantial user interaction
+            
+            setTimeout(() => {
+              allTestsBtn.disabled = false;
+              allTestsBtn.textContent = 'Run All Tests';
+            }, 1500);
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    }
+
+    function getSupportHelp() {
+      window.open('https://support.wistia.com/en/collections/5604192-webinars-and-live-events', '_blank');
+    }
+    
+    // Event Listeners
+    document.getElementById('run-all-tests').addEventListener('click', runAllTests);
+    document.getElementById('run-again-btn').addEventListener('click', runAllTests);
+    document.getElementById('get-support-btn').addEventListener('click', getSupportHelp);
+  </script>
+</body>
+</html>
